@@ -1,4 +1,4 @@
-# Peliculas
+# Servicios Veterinarios
 Proyecto Spring Boot con Servicios Veterinarios - Exp1_S3_Ignacio_Andana
 
 ## Descripción

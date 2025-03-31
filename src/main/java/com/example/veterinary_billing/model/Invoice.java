@@ -7,15 +7,13 @@ public class Invoice {
     private int id;
     private List<ServiceProvided> services;
     private String paymentMethod;
-    private double totalAmount;
-    private boolean paid;
+    private int totalAmount;
 
-    public Invoice(int id) {
+    public Invoice(int id, String paymentMethod) {
         this.id = id;
         this.services = new ArrayList<>();
-        this.totalAmount = 0.0;
-        this.paid = false;
-        this.paymentMethod = "Cash";
+        this.totalAmount = 0;
+        this.paymentMethod = paymentMethod;
     }
 
     // Getters y Setters
@@ -23,25 +21,13 @@ public class Invoice {
         return id;
     }
 
-    public List<ServiceProvided> getServices() {
+    // Este metodo permite obtener la lista de servicios asociados a la factura
+    public List<ServiceProvided> getServiceProvideds() {
         return services;
     }
 
-    public double getTotalAmount() {
+    public int getTotalAmount() {
         return totalAmount;
-    }
-
-    public boolean isPaid() {
-        return paid;
-    }
-
-    public void markAsPaid() {
-        this.paid = true;
-    }
-
-    public void addService(ServiceProvided service) {
-        services.add(service);
-        totalAmount += service.getCost();
     }
 
     public String getPaymentMethod() {
@@ -51,4 +37,11 @@ public class Invoice {
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
+    // Este metodo permite agregar un servicio a la factura y que actualice el total
+    public void addService(ServiceProvided service) {
+        services.add(service); // Agrego el servicio a la lista de asociado a la factura
+        totalAmount += service.getCost(); // Actualizo el total de la factura
+    }
+
 }

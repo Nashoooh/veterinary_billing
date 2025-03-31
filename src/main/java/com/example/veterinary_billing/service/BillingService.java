@@ -1,52 +1,67 @@
 package com.example.veterinary_billing.service;
 
+import com.example.veterinary_billing.exception.EventNotFoundException;
 import com.example.veterinary_billing.model.Invoice;
 import com.example.veterinary_billing.model.ServiceProvided;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BillingService {
     private final List<Invoice> invoices = new ArrayList<>();
-    private int nextId = 1;
+    private final List<ServiceProvided> services = new ArrayList<>();
 
-    // Registrar un nuevo servicio en una factura
-    public Invoice registerService(int invoiceId, ServiceProvided service) {
-        Invoice invoice = findInvoiceById(invoiceId);
-        if (invoice == null) {
-            invoice = new Invoice(nextId++);
-            invoices.add(invoice);
-        }
-        invoice.addService(service);
-        return invoice;
+    @PostConstruct
+    public void init() {
+        // Crear servicios predeterminados
+        services.add(new ServiceProvided("Consulta General", 15000));
+        services.add(new ServiceProvided("Vacunación", 10000));
+        services.add(new ServiceProvided("Baño y Peluquería", 8000));
+        services.add(new ServiceProvided("Desparasitación", 5000));
+        services.add(new ServiceProvided("Cirugía Menor", 30000));
+
+        // Crear facturas y asociar servicios
+        Invoice invoice1 = new Invoice(1, "Efectivo");
+        invoice1.addService(services.get(0)); // Consulta General
+        invoice1.addService(services.get(2)); // Baño y Peluquería
+
+        Invoice invoice2 = new Invoice(2, "Tarjeta de Crédito");
+        invoice2.addService(services.get(1)); // Vacunación
+        invoice2.addService(services.get(3)); // Desparasitación
+
+        Invoice invoice3 = new Invoice(3, "Efectivo");
+        invoice3.addService(services.get(0)); // Consulta General
+        invoice3.addService(services.get(4)); // Cirugía Menor
+
+        // Agregar facturas a la lista
+        invoices.add(invoice1);
+        invoices.add(invoice2);
+        invoices.add(invoice3);
     }
 
-    // Consultar todas las facturas
+    // Metodo para obtener todas las facturas existentes
     public List<Invoice> getAllInvoices() {
         return invoices;
     }
 
-    // Consultar una factura por ID
+    // Metodo para buscar una factura por ID
     public Invoice getInvoiceById(int id) {
-        return findInvoiceById(id);
+        return invoices.stream()
+                .filter(invoice -> invoice.getId() == id) // Filtra las facturas por ID
+                .findFirst() // Obtiene la primera que tenga el ID indicado
+                .orElseThrow(() -> new EventNotFoundException("Factura no encontrado con ID: " + id)); // Si no la encuentra lanza la excepción
     }
 
-    // Pagar una factura
-    public void payInvoice(int id) {
-        Invoice invoice = findInvoiceById(id);
+    // Obtener servicios de un ID factura en particular
+    public List<ServiceProvided> getServicesByInvoiceId(int invoiceId) {
+        Invoice invoice = getInvoiceById(invoiceId);
         if (invoice != null) {
-            invoice.markAsPaid();
+            return invoice.getServiceProvideds();
         }
+        return new ArrayList<>();
     }
 
-    // Método auxiliar para encontrar una factura por ID
-    private Invoice findInvoiceById(int id) {
-        Optional<Invoice> invoice = invoices.stream()
-                .filter(i -> i.getId() == id)
-                .findFirst();
-        return invoice.orElse(null);
-    }
 }

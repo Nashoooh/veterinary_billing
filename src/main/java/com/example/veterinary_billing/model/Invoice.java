@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Invoice {
-    private int id;
+    private String id;
     private List<ServiceProvided> services;
     private String paymentMethod;
     private int totalAmount;
 
-    public Invoice(int id, String paymentMethod) {
+    public Invoice(String id, String paymentMethod) {
         this.id = id;
         this.services = new ArrayList<>();
         this.totalAmount = 0;
@@ -17,7 +17,7 @@ public class Invoice {
     }
 
     // Getters y Setters
-    public int getId() {
+    public String getId() {
         return id;
     }
 

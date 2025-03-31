@@ -1,6 +1,6 @@
 package com.example.veterinary_billing.service;
 
-import com.example.veterinary_billing.exception.EventNotFoundException;
+import com.example.veterinary_billing.exception.InvoiceNotFoundException;
 import com.example.veterinary_billing.model.Invoice;
 import com.example.veterinary_billing.model.ServiceProvided;
 import jakarta.annotation.PostConstruct;
@@ -24,15 +24,15 @@ public class BillingService {
         services.add(new ServiceProvided("Cirugía Menor", 30000));
 
         // Crear facturas y asociar servicios
-        Invoice invoice1 = new Invoice(1, "Efectivo");
+        Invoice invoice1 = new Invoice("1", "Efectivo");
         invoice1.addService(services.get(0)); // Consulta General
         invoice1.addService(services.get(2)); // Baño y Peluquería
 
-        Invoice invoice2 = new Invoice(2, "Tarjeta de Crédito");
+        Invoice invoice2 = new Invoice("2", "Tarjeta de Crédito");
         invoice2.addService(services.get(1)); // Vacunación
         invoice2.addService(services.get(3)); // Desparasitación
 
-        Invoice invoice3 = new Invoice(3, "Efectivo");
+        Invoice invoice3 = new Invoice("3", "Efectivo");
         invoice3.addService(services.get(0)); // Consulta General
         invoice3.addService(services.get(4)); // Cirugía Menor
 
@@ -48,20 +48,16 @@ public class BillingService {
     }
 
     // Metodo para buscar una factura por ID
-    public Invoice getInvoiceById(int id) {
+    public Invoice getInvoiceById(String id) {
         return invoices.stream()
-                .filter(invoice -> invoice.getId() == id) // Filtra las facturas por ID
+                .filter(event -> event.getId().equals(id)) // Filtra las facturas por ID
                 .findFirst() // Obtiene la primera que tenga el ID indicado
-                .orElseThrow(() -> new EventNotFoundException("Factura no encontrado con ID: " + id)); // Si no la encuentra lanza la excepción
+                .orElseThrow(() -> new InvoiceNotFoundException("Factura no encontrada con ID: " + id)); // Si no la encuentra lanza la excepción
     }
 
     // Obtener servicios de un ID factura en particular
-    public List<ServiceProvided> getServicesByInvoiceId(int invoiceId) {
+    public List<ServiceProvided> getServicesByInvoiceId(String invoiceId) {
         Invoice invoice = getInvoiceById(invoiceId);
-        if (invoice != null) {
-            return invoice.getServiceProvideds();
-        }
-        return new ArrayList<>();
+        return invoice.getServiceProvideds();
     }
-
 }

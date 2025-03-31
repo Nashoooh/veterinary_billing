@@ -1,6 +1,5 @@
 package com.example.veterinary_billing.controller;
 
-import com.example.veterinary_billing.exception.InvoiceNotFoundException;
 import com.example.veterinary_billing.model.Invoice;
 import com.example.veterinary_billing.model.ServiceProvided;
 import com.example.veterinary_billing.service.BillingService;

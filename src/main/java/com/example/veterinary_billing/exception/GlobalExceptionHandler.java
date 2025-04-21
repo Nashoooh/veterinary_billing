@@ -19,4 +19,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
     
+    @ExceptionHandler(ServiceNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleServiceNotFoundException(ServiceNotFoundException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Servicio no encontrado");
+        errorResponse.put("message", ex.getMessage()); // Aquí se incluye el mensaje de la excepción
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
 }

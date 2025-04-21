@@ -8,6 +8,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "FACTURA")
@@ -19,12 +23,16 @@ public class Factura {
     private Long id;
 
     @Column(name = "METODO_PAGO", nullable = false, length = 255)
+    @NotBlank(message = "El método de pago no puede estar vacío")
+    @Size(max = 255, message = "El método de pago no puede tener más de 255 caracteres")
     private String metodoPago;
 
     @Column(name = "MONTO_TOTAL", nullable = false)
+    @Positive(message = "El monto total debe ser un valor positivo")
     private int montoTotal;
 
     @Column(name = "FECHA", nullable = false)
+    @FutureOrPresent(message = "La fecha no puede ser anterior a la fecha actual")
     private LocalDate fecha;  
     
     @Column(name = "PAGADO", nullable = false)

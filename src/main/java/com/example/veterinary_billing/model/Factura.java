@@ -2,6 +2,10 @@ package com.example.veterinary_billing.model;
 
 import java.time.LocalDate;
 
+import org.springframework.hateoas.RepresentationModel;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +19,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "FACTURA")
-public class Factura {
+public class Factura extends RepresentationModel<Factura> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,10 +44,10 @@ public class Factura {
 
     public Factura(){}
 
-    public Factura(Long id, String metodoPago, int paymentMethod, int totalAmount, LocalDate fecha, boolean pagado) {
+    public Factura(Long id, String metodoPago, int totalAmount, LocalDate fecha, boolean pagado) {
         this.id = id;
         this.metodoPago = metodoPago;
-        this.montoTotal = paymentMethod;
+        this.montoTotal = totalAmount;
         this.fecha = LocalDate.now(); // Fecha actual
         this.pagado = false; // Por defecto, la factura no está pagada
     }
@@ -67,6 +71,10 @@ public class Factura {
 
     public boolean isPagado() {
         return pagado;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setMetodoPago(String metodoPago) {

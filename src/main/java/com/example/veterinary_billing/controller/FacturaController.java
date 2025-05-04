@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @RestController
 @RequestMapping("/facturas")
 public class FacturaController {
@@ -33,10 +38,24 @@ public class FacturaController {
     
     // GET /facturas -> Obtener todas las facturas
     @GetMapping
-    public ResponseEntity<List<Factura>> obtenerFacturas() {
+    public ResponseEntity<List<EntityModel<Factura>>> obtenerFacturas() {
         List<Factura> facturas = facturaService.getAllInvoices();
-        return ResponseEntity.ok(facturas);
+    
+        List<EntityModel<Factura>> facturasConLinks = facturas.stream()
+                .map(factura -> {
+                    EntityModel<Factura> model = EntityModel.of(factura);
+    
+                    Link selfLink = linkTo(methodOn(FacturaController.class).obtenerFacturaPorId(factura.getId())).withSelfRel();
+                    Link serviciosLink = linkTo(methodOn(FacturaController.class).obtenerServiciosPorFactura(factura.getId())).withRel("servicios");
+    
+                    model.add(selfLink, serviciosLink);
+                    return model;
+                })
+                .toList();
+    
+        return ResponseEntity.ok(facturasConLinks);
     }
+   
 
     // POST /facturas/{idFactura}/servicios -> Agregar servicio a una factura
     @PostMapping("/{idFactura}/servicios")
@@ -73,10 +92,19 @@ public class FacturaController {
 
     // GET /invoices/{id} -> Obtener una factura por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Factura> obtenerFacturaPorId(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<Factura>> obtenerFacturaPorId(@PathVariable Long id) {
         Factura factura = facturaService.getInvoiceById(id);
-        return ResponseEntity.ok(factura);
+    
+        EntityModel<Factura> model = EntityModel.of(factura);
+    
+        Link selfLink = linkTo(methodOn(FacturaController.class).obtenerFacturaPorId(id)).withSelfRel();
+        Link serviciosLink = linkTo(methodOn(FacturaController.class).obtenerServiciosPorFactura(id)).withRel("servicios");
+    
+        model.add(selfLink, serviciosLink);
+    
+        return ResponseEntity.ok(model);
     }
+    
 
     // POST /invoices/{id}/pay -> Marcar una factura como pagada
     @PostMapping("/{id}/pagar")
@@ -89,23 +117,32 @@ public class FacturaController {
 
     // GET /facturas/{idFactura}/servicios -> Obtener los servicios de una factura
     @GetMapping("/{idFactura}/servicios")
-    public ResponseEntity<List<ServicioDTO>> obtenerServiciosPorFactura(@PathVariable Long idFactura) {
-        // Obtener los servicios asociados a la factura
+    public ResponseEntity<List<EntityModel<ServicioDTO>>> obtenerServiciosPorFactura(@PathVariable Long idFactura) {
         List<Servicio> servicios = servicioService.getServicesByInvoiceId(idFactura);
+    
+        List<EntityModel<ServicioDTO>> serviciosDTO = servicios.stream()
+            .map(servicio -> {
+                ServicioDTO dto = new ServicioDTO(
+                    servicio.getId(),
+                    servicio.getNombreServicio(),
+                    servicio.getDescripcion(),
+                    servicio.getCosto()
+                );
+    
+                EntityModel<ServicioDTO> model = EntityModel.of(dto);
+    
+                Link selfLink = linkTo(methodOn(FacturaController.class)
+                    .obtenerServiciosPorFactura(idFactura)).withSelfRel();
 
-        // Convertir los servicios a DTOs
-        List<ServicioDTO> serviciosDTO = servicios.stream()
-                .map(servicio -> new ServicioDTO(
-                        servicio.getId(),
-                        servicio.getNombreServicio(),
-                        servicio.getDescripcion(),
-                        servicio.getCosto()
-                ))
-                .toList();
-
+    
+                model.add(selfLink);
+                return model;
+            })
+            .toList();
+    
         return ResponseEntity.ok(serviciosDTO);
     }
-
+    
     // DELETE /facturas/{idFactura}/servicios -> Obtener los servicios de una factura
     @DeleteMapping("/{idFactura}/servicios/{idServicio}")
     public ResponseEntity<Map<String, Object>> eliminarServicio(@PathVariable Long idFactura, @PathVariable Long idServicio) {

@@ -1,5 +1,9 @@
 package com.example.veterinary_billing.model;
 
+import org.springframework.hateoas.RepresentationModel;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +12,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "SERVICIO")
-public class Servicio {
+public class Servicio extends RepresentationModel<Servicio> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

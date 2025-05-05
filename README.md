@@ -2,7 +2,7 @@
 Proyecto Spring Boot con Servicios Veterinarios - Exp3_S8_Ignacio_Andana
 
 ## Descripción
-Este proyecto es un API Rest de Servicios Veterinarios, diseñado para aprender los conceptos básicos de Spring Boot. Permite realizar operaciones de consulta sobre una lista de facturas y servicios almacenados en BD Oracle, subir a Docker y realizar pruebas unitarias.
+Este proyecto es un API Rest de Servicios Veterinarios, diseñado para aprender los conceptos básicos de Spring Boot. Permite realizar operaciones CRUD sobre una lista de facturas y servicios almacenadas en BD Oracle, realizar pruebas unitarias y levantar proyecto localmente y en Docker.
 
 ## Funcionalidades
 - POST /facturas

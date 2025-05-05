@@ -1,13 +1,18 @@
 # Servicios Veterinarios
-Proyecto Spring Boot con Servicios Veterinarios - Exp1_S3_Ignacio_Andana
+Proyecto Spring Boot con Servicios Veterinarios - Exp3_S8_Ignacio_Andana
 
 ## Descripción
-Este proyecto es un API Rest de Servicios Veterinarios, diseñado para aprender los conceptos básicos de Spring Boot. Permite realizar operaciones de consulta sobre una lista de facturas y servicios almacenados en memoria utilizando un ArrayList con datos predefinidos.
+Este proyecto es un API Rest de Servicios Veterinarios, diseñado para aprender los conceptos básicos de Spring Boot. Permite realizar operaciones de consulta sobre una lista de facturas y servicios almacenados en BD Oracle, subir a Docker y realizar pruebas unitarias.
 
 ## Funcionalidades
-- GET /billing/invoices: Obtiene todas las facutras existentes (array en memoria en este caso).
-- GET /billing/invoices/{id}: Obtiene una factura según el id ingresado.
-- GET /billing/invoices/{eventId}/services: Obtiene la lista de servicios asociados a una factura en base al id ingresado.
+- POST /facturas
+- GET /facturas
+- GET /facturas/{id}
+- POST /facturas/{id}/pagar
+- POST /{idFactura}/servicios
+- GET /facturas/{idFactura}/servicios
+- DELETE /facturas/{idFactura}/servicios/{idServicio}
+- PUT /facturas/{idFactura}/servicios/{idServicio}
 
 ## Tecnologías
 - Java 21
